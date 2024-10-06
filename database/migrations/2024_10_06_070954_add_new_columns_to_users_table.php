@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('name');
 
-            $table->string('firstname');
-            $table->string('lastname');
-            $table->string('timezone')->default('UTC');
+            // Add the new columns where 'name' was
+            $table->string('firstname')->after('email');
+            $table->string('lastname')->after('firstname');
+            $table->string('timezone')->default('UTC')->after('lastname');
         });
     }
 
