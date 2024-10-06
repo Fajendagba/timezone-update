@@ -27,35 +27,6 @@ class UpdateUserData extends Command
     /**
      * Execute the console command.
      */
-    /*
-    public function handle()
-    {
-        $this->info('Starting user data update...');
-
-        // Instead of using User::all(), I'm using chunk here in case of large data
-        User::query()
-            ->chunkById(100, function ($users) {
-                $updates = [];
-
-                foreach ($users as $user) {
-                    $updates[] = [
-                        'id' => $user->id,
-                        'firstname' => fake()->firstName(),
-                        'lastname' => fake()->lastName(),
-                        'timezone' => self::TIMEZONES[array_rand(self::TIMEZONES)]
-                    ];
-                }
-
-                User::upsert(
-                    $updates,
-                    ['id'],
-                    ['firstname', 'lastname', 'timezone']
-                );
-            });
-
-        $this->info('User data updated successfully!');
-    }
-    */
     public function handle(): void
     {
         $this->info('Starting user data update...');
