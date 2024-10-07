@@ -3,8 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Services\UserUpdateService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class UpdateUserData extends Command
 {
@@ -24,6 +26,14 @@ class UpdateUserData extends Command
 
     private const TIMEZONES = ['CET', 'CST', 'GMT+1'];
 
+    protected UserUpdateService $userUpdateService;
+
+    public function __construct(UserUpdateService $userUpdateService)
+    {
+        parent::__construct();
+        $this->userUpdateService = $userUpdateService;
+    }
+
     /**
      * Execute the console command.
      */
@@ -35,16 +45,27 @@ class UpdateUserData extends Command
 
         try {
             // Instead of using User::all(), I'm using chunk here in case of large data
+            $usersToUpdate = [];
+
             User::query()
-                ->chunkById(100, function ($users) {
+                ->chunkById(100, function ($users) use (&$usersToUpdate) {
                     foreach ($users as $user) {
-                        $user->update([
-                            'firstname' => fake()->firstName(),
-                            'lastname' => fake()->lastName(),
-                            'timezone' => self::TIMEZONES[array_rand(self::TIMEZONES)]
-                        ]);
+                        $newFirstname = fake()->firstName();
+                        $newLastname = fake()->lastName();
+                        $newTimezone = self::TIMEZONES[array_rand(self::TIMEZONES)];
+
+                        if ($user->firstname !== $newFirstname || $user->lastname !== $newLastname || $user->timezone !== $newTimezone) {
+                            $user->update([
+                                'firstname' => $newFirstname,
+                                'lastname' => $newLastname,
+                                'timezone' => $newTimezone
+                            ]);
+                            $usersToUpdate[] = $user;
+                        }
                     }
                 });
+
+            $this->userUpdateService->updateUsers($usersToUpdate);
 
             DB::commit();
             $this->info('User data updated successfully!');
