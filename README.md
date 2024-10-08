@@ -1,7 +1,7 @@
-# Timezone Update API
+# Timezone Update
 
 ## Overview
-This Task Management API is built using Laravel, providing a robust API for managing tasks with user update. 
+This Timezone Update is built using Laravel, providing a robust API for updating user details.
 
 ## Installation
 
